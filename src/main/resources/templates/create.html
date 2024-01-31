@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+</head>
+<body>
+<form th:action="@{/logout}" th:method="GET">
+    <input type="submit" value="Logout">
+</form>
+
+<form th:method="POST" action="/admin/create">
+    <label for="username">Enter username</label>
+    <input id="username" type="text" name="username">
+    <br>
+
+    <label for="firstname">Enter firstname</label>
+    <input id="firstname" type="text" name="firstname">
+    <br>
+
+    <label for="lastname">Enter lastname</label>
+    <input id="lastname" type="text" name="lastname">
+    <br>
+
+
+    <label for="birthdate">Choice birthdate</label>
+    <input id="birthdate" type="date" name="birthdate">
+    <br>
+
+    <label for="password">Enter password</label>
+    <input id="password" type="password" name="password">
+    <br>
+
+    <div th:each="role : ${roles}">
+        <input th:id="${role.name()}" type="checkbox" name="role" th:value="${role.name()}">
+        <label th:for="${role.name()}" th:text="${role}">Role name</label>
+    </div>
+
+    <input type="submit" value="Create!">
+</form>
+
+</body>
+</html>

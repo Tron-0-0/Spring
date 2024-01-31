@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>User</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
 
     <style>
         table {
@@ -41,16 +43,31 @@
         <th>Lastname</th>
         <th>Birthdate</th>
         <th>Roles</th>
+        <th>Action</th>
     </tr>
-    <tr>
+    <tr th:each="user : ${users}">
         <td th:utext="${user.username()}">Username</td>
         <td th:utext="${user.firstname()}">Firstname</td>
         <td th:utext="${user.lastname()}">Lastname</td>
         <td th:utext="${user.birthdate()}">Birthdate</td>
         <td th:utext="${user.roles()}">Roles</td>
+        <td>
+            <form method="POST" action="/admin/delete">
+                <input type="hidden" th:attr="value=${user.username()}" name="username">
+                <input type="submit" value="Delete">
+            </form>
 
+            <form method="GET" action="/admin/change">
+                <!--/*@thymesVar id="username" type="ru.kata.spring.boot_security.demo.dto.ShowUserReadDto"*/-->
+                <input type="hidden" th:attr="value=${user.username()}" name="username">
+                <input type="submit" value="Change">
+            </form>
+        </td>
     </tr>
 </table>
 
+<form th:method="GET" action="admin/create">
+    <input type="submit" value="Create">
+</form>
 </body>
 </html>

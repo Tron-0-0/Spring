@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Change</title>
+</head>
+<body>
+
+<form th:action="@{/logout}" th:method="GET">
+    <input type="submit" value="Logout">
+</form>
+
+<form th:action="@{/admin/change}" method="POST" th:object="${user}">
+    <label th:for="username">Enter username</label>
+    <input th:type="text" th:value="${user.username}" th:id="username" th:name="username">
+    <br>
+    <label th:for="password">Enter password</label>
+    <input th:type="password" th:value="${user.password}" th:id="password" th:name="password">
+    <br>
+
+    <label th:for="firstname">Enter firstname</label>
+    <input th:type="text" th:value="${user.firstname}" th:id="firstname" th:name="firstname">
+    <br>
+
+    <label th:for="lastname">Enter lastname</label>
+    <input th:type="text" th:value="*{lastname}" th:id="lastname" th:name="lastname">
+    <br>
+
+    <label th:for="birthdate">Enter birthdate</label>
+    <input th:type="text" th:value="*{birthdate}" th:id="birthdate" th:name="birthdate">
+    <br>
+
+    <div th:each="role : ${roles}">
+        <input th:id="${role.name()}" th:type="checkbox" name="role" th:value="${role.name()}">
+        <label th:for="${role.name()}" th:text="${role}">Role name</label>
+    </div>
+
+
+    <input type="submit" value="Change!">
+</form>
+
+</body>
+</html>
