@@ -5,7 +5,7 @@ import ru.kata.spring.boot_security.demo.dto.ShowUserReadDto;
 import ru.kata.spring.boot_security.demo.entity.User;
 
 @Component
-public class UserMapper implements Mapper<ShowUserReadDto, User>{
+public class ShowUserMapper implements Mapper<ShowUserReadDto, User>{
     @Override
     public ShowUserReadDto map(User entity) {
 
