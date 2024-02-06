@@ -2,11 +2,14 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.Aware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dto.ShowUserReadDto;
 import ru.kata.spring.boot_security.demo.entity.User;
+import ru.kata.spring.boot_security.demo.mapper.ShowUserMapper;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import javax.persistence.EntityManager;
@@ -21,26 +24,24 @@ public class UserService implements UserDetailsService, Aware {
     @PersistenceContext
     private EntityManager entityManager;
     private final UserRepository userRepository;
+    private final ShowUserMapper showUserMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ShowUserMapper showUserMapper) {
         this.userRepository = userRepository;
+        this.showUserMapper = showUserMapper;
     }
 
-
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found!!!");
-        }
-
-        return user.get();
+    public ShowUserReadDto findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(showUserMapper::map)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!!!"));
     }
 
-    public List<User> getAll() {
-        return userRepository.getAllUsers();
+    public List<ShowUserReadDto> getAll() {
+        return userRepository.getAllUsers().stream()
+                .map(showUserMapper::map)
+                .toList();
     }
 
     public boolean save(User user) {
@@ -55,27 +56,39 @@ public class UserService implements UserDetailsService, Aware {
         return true;
     }
 
-    public void deleteByUsername(String username) {
-        userRepository.deleteByUsername(username);
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
 
     }
 
-    public void update(User map) {
-        Optional<User> optionalUser = userRepository.findByUsername(map.getUsername());
+    public void update(Long id, User mapEntity) {
+        Optional<User> optionalUser = userRepository.findById(id);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
-            user.setUsername(map.getUsername());
-            user.setFirstname(map.getFirstname());
-            user.setLastname(map.getLastname());
-            user.setPassword(map.getPassword());
-            user.setBirthdate(map.getBirthdate());
+            user.setUsername(mapEntity.getUsername());
+            user.setFirstname(mapEntity.getFirstname());
+            user.setLastname(mapEntity.getLastname());
+
+            if (mapEntity.getPassword()!=null) {
+                user.setPassword(mapEntity.getPassword());
+            }
+            user.setAge(mapEntity.getAge());
 
             user.getRoles().clear();
-            user.getRoles().addAll(map.getRoles());
+            user.getRoles().addAll(mapEntity.getRoles());
 
             entityManager.merge(user);
         }
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!!!"));
+
+    }
+
+
 }

@@ -19,9 +19,9 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    private Byte age;
     private String firstname;
     private String lastname;
-    private LocalDate birthdate;
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -31,10 +31,12 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String firstname, String lastname, LocalDate birthdate, Set<Role> roles, String password) {
+    public User(String username, Byte age, String firstname, String lastname,
+                Set<Role> roles, String password) {
+        this.username = username;
+        this.age = age;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.birthdate = birthdate;
         this.roles = roles;
         this.password = password;
     }
@@ -101,14 +103,6 @@ public class User implements UserDetails {
         this.lastname = lastname;
     }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
-    }
-
-    public void setBirthdate(LocalDate birthdate) {
-        this.birthdate = birthdate;
-    }
-
     public Set<Role> getRoles() {
         return roles;
     }
@@ -119,5 +113,13 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Byte getAge() {
+        return age;
+    }
+
+    public void setAge(Byte age) {
+        this.age = age;
     }
 }

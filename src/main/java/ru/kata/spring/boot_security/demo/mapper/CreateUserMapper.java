@@ -7,7 +7,6 @@ import ru.kata.spring.boot_security.demo.dto.CreateUserReadDto;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -15,35 +14,37 @@ import java.util.stream.Collectors;
 @Component
 public class CreateUserMapper implements Mapper<User, CreateUserReadDto> {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public CreateUserMapper(BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public CreateUserMapper(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
+
 
     @Override
     public User map(CreateUserReadDto entity) {
         User user = new User();
 
         user.setUsername(entity.username());
+        user.setAge(entity.age());
         user.setFirstname(entity.firstname());
         user.setLastname(entity.lastname());
-        user.setPassword(bCryptPasswordEncoder.encode(entity.password()));
 
-        if (!entity.birthdate().isEmpty()) {
-            user.setBirthdate(LocalDate.parse(entity.birthdate()));
+        if (!entity.password().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(entity.password()));
         }
 
-        if (entity.role().contains(",")) {
-            user.setRoles(Arrays.stream(entity.role().split(","))
-                    .map(Role::valueOf)
+        if (entity.roles().contains(",")) {
+            user.setRoles(Arrays.stream(entity.roles().split(","))
+                    .map(role -> Role.valueOf("ROLE_" + role.toUpperCase()))
                     .collect(Collectors.toSet()));
         } else {
-            user.setRoles(Collections.singleton(Role.valueOf(entity.role())));
+            user.setRoles(Collections.singleton(Role.valueOf("ROLE_" + entity.roles())));
         }
 
 
         return user;
     }
 }
+
