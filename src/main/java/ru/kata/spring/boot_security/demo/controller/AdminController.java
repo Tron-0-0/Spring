@@ -54,42 +54,4 @@ public class AdminController {
 
         return "redirect:/admin";
     }
-
-
-
-//    @GetMapping("/create")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public String showPageToCreateUser(Model model) {
-//        model.addAttribute("roles", Role.values());
-//        return "create";
-//    }
-//
-//    @PostMapping("/create")
-//    public String createUser(@ModelAttribute CreateUserReadDto user) {
-//        userService.save(createUserMapper.map(user));
-//
-//        return "redirect:/admin";
-//    }
-//
-//    @GetMapping("/change")
-//    public String showChangePage(Model model, @RequestParam("username") String username) {
-//        model.addAttribute("user", userService.loadUserByUsername(username));
-//        model.addAttribute("roles", Role.values());
-//
-//        return "change";
-//    }
-//
-//    @PostMapping("/change")
-//    public String changeUser(@ModelAttribute CreateUserReadDto createUserReadDto) {
-//        userService.update(createUserMapper.map(createUserReadDto));
-//
-//        return "redirect:/admin";
-//    }
-//
-//    @PostMapping("/delete")
-//    public String deleteUser(@RequestParam("username") String username) {
-//        userService.deleteByUsername(username);
-//
-//        return "redirect:/admin";
-//    }
 }
