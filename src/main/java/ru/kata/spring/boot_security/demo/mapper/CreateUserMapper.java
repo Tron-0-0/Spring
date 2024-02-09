@@ -7,9 +7,7 @@ import ru.kata.spring.boot_security.demo.dto.CreateUserReadDto;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 public class CreateUserMapper implements Mapper<User, CreateUserReadDto> {
@@ -31,18 +29,15 @@ public class CreateUserMapper implements Mapper<User, CreateUserReadDto> {
         user.setFirstname(entity.firstname());
         user.setLastname(entity.lastname());
 
-        if (!entity.password().isEmpty()) {
+        if (!entity.password().equals("undefined")) {
             user.setPassword(passwordEncoder.encode(entity.password()));
         }
 
-        if (entity.roles().contains(",")) {
-            user.setRoles(Arrays.stream(entity.roles().split(","))
-                    .map(role -> Role.valueOf("ROLE_" + role.toUpperCase()))
-                    .collect(Collectors.toSet()));
-        } else {
-            user.setRoles(Collections.singleton(Role.valueOf("ROLE_" + entity.roles())));
-        }
+        List<Role> roles = entity.roles().stream()
+                .map(role -> Role.valueOf("ROLE_" + role))
+                .toList();
 
+        user.setRoles(roles);
 
         return user;
     }

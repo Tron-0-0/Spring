@@ -38,6 +38,12 @@ public class UserService implements UserDetailsService, Aware {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!!!"));
     }
 
+    public ShowUserReadDto findById(Long id) {
+        return userRepository.findById(id)
+                .map(showUserMapper::map)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!!!"));
+    }
+
     public List<ShowUserReadDto> getAll() {
         return userRepository.getAllUsers().stream()
                 .map(showUserMapper::map)
@@ -61,26 +67,28 @@ public class UserService implements UserDetailsService, Aware {
 
     }
 
-    public void update(Long id, User mapEntity) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    public void update(User user) {
+        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
 
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            User oldUser = optionalUser.get();
 
-            user.setUsername(mapEntity.getUsername());
-            user.setFirstname(mapEntity.getFirstname());
-            user.setLastname(mapEntity.getLastname());
+            oldUser.setUsername(user.getUsername());
+            oldUser.setFirstname(user.getFirstname());
+            oldUser.setLastname(user.getLastname());
 
-            if (mapEntity.getPassword()!=null) {
-                user.setPassword(mapEntity.getPassword());
+            if (!user.getPassword().equals("undefined")) {
+                oldUser.setPassword(user.getPassword());
             }
-            user.setAge(mapEntity.getAge());
 
-            user.getRoles().clear();
-            user.getRoles().addAll(mapEntity.getRoles());
+            oldUser.setAge(user.getAge());
 
-            entityManager.merge(user);
+            oldUser.getRoles().clear();
+            oldUser.getRoles().addAll(user.getRoles());
+
+            entityManager.merge(oldUser);
         }
+
     }
 
     @Override
